@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class MarubatsuGame {
-	
+	//変更テスト
 	static final int EMPTY = 0;
 	static final int BOARD_SIZE =3;
 	static final int PLAYER_1 = 1;
