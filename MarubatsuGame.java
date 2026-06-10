@@ -1,30 +1,40 @@
 import java.util.Scanner;
 
 public class MarubatsuGame {
-	//変更テスト
+	
 	static final int EMPTY = 0;
-	static final int BOARD_SIZE =3;
+	static final int BOARD_SIZE =5;
 	static final int PLAYER_1 = 1;
 	static final int PLAYER_2 = 2;
 
 
 	public static void main(String[] args) {
 		int player;
+		String boardStr ="";
 		boolean isWin =false;
-
-		final int BOARD_SIZE =3;
 		int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
 		
 		
 		//盤面準備
 		System.out.println("-----ゲーム開始-----");
 
-		for(int i=0;i<board.length;i++) {
-			System.out.println("　│　│　 ");
-			if(i<board.length-1) {
-				System.out.println("─　─　─ ");
-			}	
+		for(int i=0;i<BOARD_SIZE;i++) {
+			boardStr ="";
+			for(int j=0;j<BOARD_SIZE-1;j++) {
+				boardStr += "　│";
+			}
+			System.out.println(boardStr);
+			
+			boardStr ="";
+			if(i<BOARD_SIZE-1) {
+				for(int j=0;j<BOARD_SIZE;j++) {
+					boardStr += "─　";
+				}
+				System.out.println(boardStr);
+			}
+			
 		}
+
 		
 		//ゲームスタート
 		while(!isWin){
@@ -167,7 +177,7 @@ public class MarubatsuGame {
 			for(int j=0;j<board[i].length;j++) {
 			
 				//記入されていないマスがあればスキップ
-				if(board[i][j]==0) {
+				if(board[i][j]==EMPTY) {
 					break;
 				}
 				
