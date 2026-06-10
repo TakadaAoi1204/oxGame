@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class MarubatsuGame {
 	
 	static final int EMPTY = 0;
-	static final int BOARD_SIZE =5;
+	static final int BOARD_SIZE =3;
 	static final int PLAYER_1 = 1;
 	static final int PLAYER_2 = 2;
 
@@ -12,6 +12,8 @@ public class MarubatsuGame {
 		int player;
 		String boardStr ="";
 		boolean isWin =false;
+		boolean isDraw =false;
+		boolean isFull =false;
 		int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
 		
 		
@@ -37,7 +39,7 @@ public class MarubatsuGame {
 
 		
 		//ゲームスタート
-		while(!isWin){
+		while(!isWin && !isDraw){
 			//PL1		
 				player=PLAYER_1;
 				
@@ -55,7 +57,34 @@ public class MarubatsuGame {
 					break;
 				}
 			
+			//引き分け判定	
+			for(int i=0;i<board.length;i++) {
+				isFull=false;
+				for(int j=0;j<board[i].length;j++) {
+				
+					//記入されていないマスがあればスキップ
+					if(board[i][j]==EMPTY) {
+						break;
+					}
+					
+					if(j==board[i].length-1) {
+						isFull =true;
+					}
+				}
+				
+				//最後の行かつ、すべて記入済みの場合
+				if(i==board.length-1 && isFull) {
+					isDraw =true;
+					System.out.println("引き分けです。");
+				}
+			}
+			
+			
 			//PL2
+			//引き分けの場合終了させる
+			if(isDraw==true) {
+				break;
+			}
 			player=PLAYER_2;
 			
 			selectBoard(player,board);
@@ -221,8 +250,9 @@ public class MarubatsuGame {
 	 */
 	//
 	public static void printBoard(int board[][],int player, boolean isWin) {
+		String boardStr="";
 		for(int i=0;i<board.length;i++) {
-			String boardStr="";
+			boardStr="";
 			for(int j=0;j<board[i].length;j++) {
 				switch (board[i][j]) {
 				//PL1
@@ -251,10 +281,15 @@ public class MarubatsuGame {
 				}
 			}
 			System.out.println(boardStr);
-			if(i<board.length-1) {
-				System.out.println("─　─　─ ");
-			}
 			
+			boardStr="";
+			if(i<board.length-1) {
+				for(int j=0;j<board.length;j++) {
+					boardStr += "─　";
+				}
+				System.out.println(boardStr);
+			}
+				
 			
 		}
 		if(isWin) {
