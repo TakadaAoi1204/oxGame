@@ -9,19 +9,14 @@ public class MarubatsuGame {
 
 
 	public static void main(String[] args) {
-		int player;
-		String boardStr ="";
-		boolean isWin =false;
-		boolean isDraw =false;
-		boolean isFull =false;
-		int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
 		
+		int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
 		
 		//盤面準備
 		System.out.println("-----ゲーム開始-----");
 
 		for(int i=0;i<BOARD_SIZE;i++) {
-			boardStr ="";
+			String boardStr ="";
 			for(int j=0;j<BOARD_SIZE-1;j++) {
 				boardStr += "　│";
 			}
@@ -39,7 +34,10 @@ public class MarubatsuGame {
 
 		
 		//ゲームスタート
-		while(!isWin && !isDraw){
+		int player;
+		boolean isContinue =true;
+		
+		while(isContinue){
 			//PL1		
 				player=PLAYER_1;
 				
@@ -47,42 +45,23 @@ public class MarubatsuGame {
 				selectBoard(player,board);
 					
 				//勝利しているかチェック
-				isWin = isWinner(board);
+				isContinue = isWinner(board);
 				
 				//選択を盤面に反映して出力
-				printBoard(board,player,isWin);
+				printBoard(board,player,isContinue);
 				
-				//勝利していればゲーム終了
-				if(isWin) {
+				//引き分けかチェック
+				isContinue= isDraw(board,isContinue);
+				
+				//勝利.引き分けしていればゲーム終了
+				if(!isContinue) {
 					break;
 				}
-			
-			//引き分け判定	
-			for(int i=0;i<board.length;i++) {
-				isFull=false;
-				for(int j=0;j<board[i].length;j++) {
-				
-					//記入されていないマスがあればスキップ
-					if(board[i][j]==EMPTY) {
-						break;
-					}
-					
-					if(j==board[i].length-1) {
-						isFull =true;
-					}
-				}
-				
-				//最後の行かつ、すべて記入済みの場合
-				if(i==board.length-1 && isFull) {
-					isDraw =true;
-					System.out.println("引き分けです。");
-				}
-			}
 			
 			
 			//PL2
 			//引き分けの場合終了させる
-			if(isDraw==true) {
+			if(!isContinue) {
 				break;
 			}
 			player=PLAYER_2;
@@ -90,13 +69,13 @@ public class MarubatsuGame {
 			selectBoard(player,board);
 			
 			//勝利しているかチェック
-			isWin = isWinner(board);
+			isContinue = isWinner(board);
 			
 			//選択を盤面に反映して出力
-			printBoard(board,player,isWin);
+			printBoard(board,player,isContinue);
 			
 			//勝利していればゲーム終了
-			if(isWin) {
+			if(!isContinue) {
 				break;
 			}
 		}
@@ -142,7 +121,7 @@ public class MarubatsuGame {
 	 * @return 勝者であるかどうか
 	 */
 	public static boolean isWinner(int board[][]) {
-		boolean isWin =false; 
+		boolean isContinue =true; 
 		int[][] rows = new int[board.length][board.length];
 		int[][] columns = new int[board.length][board.length];
 		int[][] diagonals = new int[2][board.length];
@@ -154,9 +133,9 @@ public class MarubatsuGame {
 			}
 		}
 		
-		isWin = isLineCompleted(rows);
-		if(isWin) {
-			return isWin;
+		isContinue = isLineCompleted(rows);
+		if(!isContinue) {
+			return isContinue;
 		}
 		
 		
@@ -167,9 +146,9 @@ public class MarubatsuGame {
 			}
 		}
 		
-		isWin = isLineCompleted(columns);
-		if(isWin) {
-			return isWin;
+		isContinue = isLineCompleted(columns);
+		if(!isContinue) {
+			return isContinue;
 		}
 		
 		
@@ -183,12 +162,12 @@ public class MarubatsuGame {
 			diagonals[1][i]=board[i][board.length-(i+1)];
 		}
 		
-		isWin = isLineCompleted(diagonals);
-		if(isWin) {
-			return isWin;
+		isContinue = isLineCompleted(diagonals);
+		if(!isContinue) {
+			return isContinue;
 		}
 		
-		return isWin;
+		return isContinue;
 			
 	}
 	
@@ -199,7 +178,7 @@ public class MarubatsuGame {
 	 * @return 三マス揃っている箇所があるかどうか
 	 */
 	public static boolean isLineCompleted(int board[][]) {	
-		boolean isComplete =false;
+		boolean isContinue =true;
 		int previousValue =0;
 		
 		for(int i=0;i<board.length;i++) {
@@ -218,9 +197,9 @@ public class MarubatsuGame {
 					//ひとつ前の値と同じかチェック
 					if(previousValue==board[i][j]) {
 						
-						//行の最後のマスなら勝利として返す
+						//行の最後のマスなら勝利(継続しない)として返す
 						if(j==board[i].length-1) {
-							isComplete = true;
+							isContinue = false;
 						}
 						
 						previousValue=board[i][j];
@@ -232,13 +211,13 @@ public class MarubatsuGame {
 			}
 			
 			//勝利していれば終了
-			if(isComplete==true) {
-				return isComplete;
+			if(!isContinue) {
+				return isContinue;
 			}
 		
 		}
 		
-		return isComplete;
+		return isContinue;
 	}
 	
 	
@@ -249,7 +228,7 @@ public class MarubatsuGame {
 	 * @param isWin 勝利しているかどうか　勝利している場合勝利メッセージを追加
 	 */
 	//
-	public static void printBoard(int board[][],int player, boolean isWin) {
+	public static void printBoard(int board[][],int player, boolean isContinue) {
 		String boardStr="";
 		for(int i=0;i<board.length;i++) {
 			boardStr="";
@@ -289,13 +268,31 @@ public class MarubatsuGame {
 				}
 				System.out.println(boardStr);
 			}
-				
-			
+
 		}
-		if(isWin) {
+		if(!isContinue) {
 			System.out.println("プレイヤー"+player+"の勝利です!");
 			System.out.println("-----ゲーム終了-----");
 		}
+	}
+	
+	public static boolean isDraw(int board[][],boolean isContinue) {
+	//引き分け判定	→まだ打てるか？　ゲーム継続できるか
+	//空きがあるか
+		for(int i=0;i<board.length;i++) {
+			
+			for(int j=0;j<board[i].length;j++) {
+			
+				//記入されていないマスがあればチェック終了＆ゲーム継続
+				if(board[i][j]==EMPTY) {
+					return isContinue;
+				}
+	
+			}
+		}
+		isContinue =false;
+		System.out.println("引き分けです。");
+		return isContinue;
 	}
 		
 	
