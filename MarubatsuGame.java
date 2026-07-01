@@ -36,40 +36,47 @@ public class MarubatsuGame {
 		//ゲームスタート
 		int player;
 		boolean isContinue =true;
+		boolean isWin=false;
+		boolean isDraw=false;
 		
 		while(isContinue){
 			//PL1		
-				player=PLAYER_1;
-				
-				//マスを選択
-				selectBoard(player,board);
-					
-				//勝利しているかチェック
-				isContinue = isWinner(board);
-				
-				//選択を盤面に反映して出力
-				printBoard(board,player,isContinue);
-				
-				//引き分けかチェック
-				isContinue= isDraw(board,isContinue);
-				
-				//勝利.引き分けしていればゲーム終了
-				if(!isContinue) {
-					break;
-				}
+			player=PLAYER_1;
 			
+			//マスを選択
+			selectBoard(player,board);
+				
+			//勝利しているかチェック
+			isWin = isWinner(board);
+			if(isWin) {
+				isContinue =false;
+			}
 			
-			//PL2
-			//引き分けの場合終了させる
+			//選択を盤面に反映して出力
+			printBoard(board,player,isContinue);
+			
+			//勝利.引き分けしていればゲーム終了
 			if(!isContinue) {
 				break;
 			}
+			
+			//引き分けかチェック
+			isDraw= isDraw(board,isContinue);
+			if(isDraw) {
+				isContinue =false;
+			}
+			
+			
+			//PL2
 			player=PLAYER_2;
 			
 			selectBoard(player,board);
 			
 			//勝利しているかチェック
-			isContinue = isWinner(board);
+			isWin = isWinner(board);
+			if(isWin) {
+				isContinue =false;
+			}
 			
 			//選択を盤面に反映して出力
 			printBoard(board,player,isContinue);
@@ -121,7 +128,10 @@ public class MarubatsuGame {
 	 * @return 勝者であるかどうか
 	 */
 	public static boolean isWinner(int board[][]) {
-		boolean isContinue =true; 
+		
+		//メソッド名を変える　canContinue等
+		
+		boolean isWin =false; 
 		int[][] rows = new int[board.length][board.length];
 		int[][] columns = new int[board.length][board.length];
 		int[][] diagonals = new int[2][board.length];
@@ -133,9 +143,9 @@ public class MarubatsuGame {
 			}
 		}
 		
-		isContinue = isLineCompleted(rows);
-		if(!isContinue) {
-			return isContinue;
+		isWin = isLineCompleted(rows);
+		if(isWin) {
+			return isWin;
 		}
 		
 		
@@ -146,9 +156,9 @@ public class MarubatsuGame {
 			}
 		}
 		
-		isContinue = isLineCompleted(columns);
-		if(!isContinue) {
-			return isContinue;
+		isWin = isLineCompleted(columns);
+		if(isWin) {
+			return isWin;
 		}
 		
 		
@@ -162,12 +172,12 @@ public class MarubatsuGame {
 			diagonals[1][i]=board[i][board.length-(i+1)];
 		}
 		
-		isContinue = isLineCompleted(diagonals);
-		if(!isContinue) {
-			return isContinue;
+		isWin = isLineCompleted(diagonals);
+		if(isWin) {
+			return isWin;
 		}
 		
-		return isContinue;
+		return isWin;
 			
 	}
 	
@@ -177,8 +187,13 @@ public class MarubatsuGame {
 	 * @param board 盤面を管理する配列
 	 * @return 三マス揃っている箇所があるかどうか
 	 */
-	public static boolean isLineCompleted(int board[][]) {	
-		boolean isContinue =true;
+	public static boolean isLineCompleted(int board[][]) {
+		
+		//falseで継続になっているから意味が反対になってしまっている
+		//→勝てるラインがあるか？に修正　false:継続  true:終了
+		
+		
+		boolean isWin =false;
 		int previousValue =0;
 		
 		for(int i=0;i<board.length;i++) {
@@ -197,9 +212,9 @@ public class MarubatsuGame {
 					//ひとつ前の値と同じかチェック
 					if(previousValue==board[i][j]) {
 						
-						//行の最後のマスなら勝利(継続しない)として返す
+						//行の最後のマスなら勝利として返す
 						if(j==board[i].length-1) {
-							isContinue = false;
+							isWin = true;
 						}
 						
 						previousValue=board[i][j];
@@ -211,13 +226,13 @@ public class MarubatsuGame {
 			}
 			
 			//勝利していれば終了
-			if(!isContinue) {
-				return isContinue;
+			if(isWin) {
+				return isWin;
 			}
 		
 		}
 		
-		return isContinue;
+		return isWin;
 	}
 	
 	
@@ -276,6 +291,11 @@ public class MarubatsuGame {
 		}
 	}
 	
+	/**
+	 * 引き分けかどうか判定。未記入のマスがあったら終了
+	 * @param board 盤面を管理する配列
+	 * @param isContinue ゲーム継続フラグ
+	 */
 	public static boolean isDraw(int board[][],boolean isContinue) {
 	//引き分け判定	→まだ打てるか？　ゲーム継続できるか
 	//空きがあるか
