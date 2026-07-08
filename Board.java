@@ -1,11 +1,9 @@
 
 public class Board {
-	public static final int EMPTY =0;
-	private final int[][] board;
+	private static final int EMPTY =0;
+	private static final int BOARD_SIZE =3;
+	private static final int[][] board = new int[BOARD_SIZE][BOARD_SIZE];;
 	
-	public Board(int boardSize) {
-		board = new int[boardSize][boardSize];
-	}
 	
 	/**
 	 * 盤面に選択したマスを置けるか判定
@@ -17,10 +15,11 @@ public class Board {
 	public boolean place(int row,int column,int player) {
 		if(board[row][column] == EMPTY) {
 			board[row][column]=player;
+			return true;
 		}else {
 			return false;
 		}
-		return true;
+		
 	}
 	
 	/**
